@@ -13,7 +13,6 @@ class ViewController: UIViewController, XMLParserDelegate, UITableViewDelegate, 
     @IBOutlet weak var myTableView: UITableView!
     var myFruitData = [FruitData]()
     
-      
     var dTitle = ""
     var dAuthor = ""
 
