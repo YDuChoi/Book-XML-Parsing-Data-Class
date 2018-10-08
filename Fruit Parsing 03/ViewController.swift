@@ -8,19 +8,22 @@
 
 import UIKit
 
-class ViewController: UIViewController, XMLParserDelegate {
+class ViewController: UIViewController, XMLParserDelegate, UITableViewDelegate, UITableViewDataSource {
     // 데이터 클래스 객체 배열
+    @IBOutlet weak var myTableView: UITableView!
     var myFruitData = [FruitData]()
     
-    var dName = ""
-    var dColor = ""
-    var dCost = ""
+      
+    var dTitle = ""
+    var dAuthor = ""
 
     // 현재의 tag를 저장
     var currentElement = ""
 
     override func viewDidLoad() {
         super.viewDidLoad()
+      myTableView.delegate = self
+      myTableView.dataSource = self
         // Do any additional setup after loading the view, typically from a nib.
         // Fruit.xml 화일을 가져 오기
         // optional binding nil check
@@ -37,7 +40,8 @@ class ViewController: UIViewController, XMLParserDelegate {
 //                    print(myFruitData[0].cost)
                     
                     for i in 0 ..< myFruitData.count {
-                        print(myFruitData[i].name)
+                        print(myFruitData[i].title)
+                        print(myFruitData[i].author)
                     }
                 } else {
                     print("파싱 실패")
@@ -51,6 +55,20 @@ class ViewController: UIViewController, XMLParserDelegate {
             print("xml file not found")
         }
     }
+      
+      func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+            return myFruitData.count
+      }
+      
+      func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+            let cell = myTableView.dequeueReusableCell(withIdentifier: "RE", for: indexPath)
+            
+            cell.textLabel?.text = myFruitData[indexPath.row].title
+            
+            cell.detailTextLabel?.text = myFruitData[indexPath.row].author
+            
+            return cell
+      }
     
     // XML Parser delegate 메소드
     // 1. tag(element)를 만나면 실행
@@ -65,9 +83,8 @@ class ViewController: UIViewController, XMLParserDelegate {
         
         if !data.isEmpty {
             switch currentElement {
-            case "name" : dName = data
-            case "color" : dColor = data
-            case "cost" : dCost = data
+            case "title" : dTitle = data
+            case "author" : dAuthor = data
             default : break
             }
         }
@@ -75,11 +92,10 @@ class ViewController: UIViewController, XMLParserDelegate {
     
     //3. tag가 끝날때 실행(/tag)
     func parser(_ parser: XMLParser, didEndElement elementName: String, namespaceURI: String?, qualifiedName qName: String?) {
-        if elementName == "item" {
+        if elementName == "book" {
             let myItem = FruitData()
-            myItem.name = dName
-            myItem.color = dColor
-            myItem.cost = dCost
+            myItem.title = dTitle
+            myItem.author = dAuthor
             myFruitData.append(myItem)
         }
     }
